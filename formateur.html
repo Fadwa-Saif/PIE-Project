@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Formateur</title>
+    <style>
+        /* ... existing styles ... */
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #dashboard {
+            display: none;
+        }
+
+        .student-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar {
+            background: var(--primary-color);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            color:lightblue;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: rgb(80, 47, 47);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: var(--secondary-color);
+        }
+
+        .profile-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(44, 82, 130, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .profile-info {
+            flex-grow: 1;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            background: var(--background-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .stat-card {
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .logout-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c53030;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="nav-logo">FormationPro</a>
+            <div class="nav-menu">
+                <a href="#" class="nav-link" onclick="showSection('dashboard')">Accueil</a>
+                <a href="#" class="nav-link" onclick="showSection('profile')">Profile</a>
+                <button class="logout-btn" onclick="logout()">Déconnexion</button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="profile" class="dashboard" style="display: none;">
+        <div class="profile-section">
+            <div class="profile-header">
+                <div class="profile-avatar">F</div>
+                <div class="profile-info">
+                    <h2 id="teacherName">Formateur</h2>
+                    <p id="teacherEmail">formateur@example.com</p>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <h3>Étudiants</h3>
+                    <p id="studentCount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Réponses Quiz</h3>
+                    <p id="quizCount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Descriptions</h3>
+                    <p id="descriptionCount">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard" class="dashboard">
+        <div class="responses-card">
+            <h2>Réponses des Stagiaires</h2>
+            <div id="studentResponses">
+                <!-- Will be filled by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            document.getElementById('dashboard').style.display = 
+                sectionId === 'dashboard' ? 'block' : 'none';
+            document.getElementById('profile').style.display = 
+                sectionId === 'profile' ? 'block' : 'none';
+            
+            if (sectionId === 'profile') {
+                loadProfileData();
+            }
+        }
+
+        async function loadProfileData() {
+            try {
+                const response = await fetch('http://localhost:5000/api/teacher/profile');
+                const data = await response.json();
+                
+                document.getElementById('teacherName').textContent = data.name;
+                document.getElementById('teacherEmail').textContent = data.email;
+                document.getElementById('studentCount').textContent = data.studentCount;
+                document.getElementById('quizCount').textContent = data.quizCount;
+                document.getElementById('descriptionCount').textContent = data.descriptionCount;
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userRole');
+            window.location.href = 'login.html';
+        }
+
+         window.onload = function() {
+            const userRole = localStorage.getItem('userRole');
+            if (userRole !== 'formateur') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            loadStudentResponses();
+        }
+
+        async function loadStudentResponses() {
+            try {
+                const response = await fetch('http://localhost:5000/api/quiz/responses');
+                const data = await response.json();
+                
+                const responsesContainer = document.getElementById('studentResponses');
+                responsesContainer.innerHTML = '';
+                
+                const correctAnswers = [0, 0]; // First answer of each question is correct
+                
+                data.forEach(student => {
+                    const score = student.answers.reduce((acc, answer, index) => 
+                        acc + (answer === correctAnswers[index] ? 1 : 0), 0);
+                        
+                    
+                    responsesContainer.innerHTML += `
+                        <div class="student-card">
+                            <div class="student-info">
+                                <div class="info-item">
+                                    <strong>Nom:</strong> ${student.studentName}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Email:</strong> ${student.studentEmail}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Score:</strong> ${score}/${correctAnswers.length}
+                                </div>
+                            </div>
+                            <table class="answers-table">
+                                <thead>
+                                    <tr>
+                                        <th>Question</th>
+                                        <th>Réponse</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${student.answers.map((answer, index) => `
+                                        <tr>
+                                            <td>Question ${index + 1}</td>
+                                            <td>Option ${answer + 1}</td>
+                                            <td>
+                                                <span class="status ${answer === correctAnswers[index] ? 'correct' : 'incorrect'}">
+                                                    ${answer === correctAnswers[index] ? 'Correct' : 'Incorrect'}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading responses:', error);
+                alert('Erreur lors du chargement des réponses');
+            }
+        }
+    </script>
+</body>
+</html>
