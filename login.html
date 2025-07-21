@@ -142,44 +142,30 @@
     </div>
 
     <script>
-        async function handleLogin(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
-            
-            try {
-                const response = await fetch('http://localhost:5000/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Store auth token if provided by the server
-                    if (data.token) {
-                        localStorage.setItem('authToken', data.token);
-                    }
-                    
-                    // Store teacher info
-                    localStorage.setItem('userName', username);
-                    localStorage.setItem('userRole', 'formateur');
-                    
-                    // Redirect to teacher dashboard
-                    window.location.href = 'formateur.html';
-                } else {
-                    errorMessage.style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                errorMessage.textContent = 'Erreur de connexion au serveur';
-                errorMessage.style.display = 'block';
-            }
+        const predefinedFormateurs = [
+          { username: "formateur1", password: "1234" },
+          { username: "admin", password: "admin" }
+        ];
+      
+        function handleLogin(event) {
+          event.preventDefault();
+          const username = document.getElementById("username").value.trim();
+          const password = document.getElementById("password").value.trim();
+      
+          const matched = predefinedFormateurs.find(
+            f => f.username === username && f.password === password
+          );
+      
+          if (matched) {
+            localStorage.setItem("loggedInFormateur", username);
+            window.location.href = "formateur.html";
+          } else {
+            const errorDiv = document.getElementById("errorMessage");
+            errorDiv.style.display = "block";
+          }
         }
-    </script>
+      </script>
+      
+      
 </body>
 </html>
