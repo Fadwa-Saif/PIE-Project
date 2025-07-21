@@ -4,54 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espace Formateur</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ... existing styles ... */
-
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        :root {
+            --primary-color: #2c5282;
+            --secondary-color: #4299e1;
+            --accent-color: #3182ce;
+            --background-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-light: #718096;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
-
-        .form-group {
-            margin-bottom: 1rem;
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        #dashboard {
-            display: none;
-        }
-
-        .student-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        
         .navbar {
             background: var(--primary-color);
             padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-
+        
         .nav-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -59,46 +48,92 @@
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .nav-logo {
-            color:lightblue;
+            color: white;
             font-size: 1.5rem;
             font-weight: bold;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-
+        
         .nav-menu {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
         }
-
+        
         .nav-link {
-            color: rgb(80, 47, 47);
+            color: rgba(255, 255, 255, 0.85);
             text-decoration: none;
             padding: 0.5rem 1rem;
             border-radius: 5px;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-
-        .nav-link:hover {
+        
+        .nav-link:hover, .nav-link.active {
             background: var(--secondary-color);
+            color: white;
         }
-
+        
+        .logout-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logout-btn:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .dashboard {
+            display: none;
+        }
+        
+        .dashboard.active {
+            display: block;
+        }
+        
         .profile-section {
-            background: white;
+            background: var(--card-bg);
             padding: 2rem;
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(44, 82, 130, 0.1);
+            box-shadow: var(--shadow-lg);
             margin-bottom: 2rem;
+            transition: transform 0.3s ease;
         }
-
+        
+        .profile-section:hover {
+            transform: translateY(-5px);
+        }
+        
         .profile-header {
             display: flex;
             align-items: center;
             gap: 2rem;
             margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
         }
-
+        
         .profile-avatar {
             width: 100px;
             height: 100px;
@@ -110,99 +145,218 @@
             color: white;
             font-size: 2rem;
             font-weight: bold;
+            box-shadow: var(--shadow);
         }
-
+        
         .profile-info {
             flex-grow: 1;
         }
-
+        
+        .profile-info h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .profile-info p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+        
         .profile-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            gap: 1.5rem;
             background: var(--background-color);
             padding: 1.5rem;
             border-radius: 10px;
         }
-
+        
         .stat-card {
-            padding: 1rem;
-            background: white;
+            padding: 1.5rem;
+            background: var(--card-bg);
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            text-align: center;
         }
-
-        .logout-btn {
-            background: #e53e3e;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
-
-        .logout-btn:hover {
-            background: #c53030;
+        
+        .stat-card h3 {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .stat-card p {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .student-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .student-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .student-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .student-card ul {
+            list-style-type: none;
+            padding-left: 1rem;
+        }
+        
+        .student-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .student-card li:last-child {
+            border-bottom: none;
+        }
+        
+        .student-card li::before {
+            content: "•";
+            color: var(--secondary-color);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state p {
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-menu {
+                gap: 0.75rem;
+            }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-content">
-            <a href="#" class="nav-logo">FormationPro</a>
+            <a href="#" class="nav-logo">
+                <i class="fas fa-chalkboard-teacher"></i>
+                FormationPro
+            </a>
             <div class="nav-menu">
-                <a href="#" class="nav-link" onclick="showSection('dashboard')">Accueil</a>
-                <a href="#" class="nav-link" onclick="showSection('profile')">Profile</a>
-                <button class="logout-btn" onclick="logout()">Déconnexion</button>
+                <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                    <i class="fas fa-home"></i> Accueil
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('profile')">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
             </div>
         </div>
     </nav>
-
-    <div id="profile" class="dashboard" style="display: none;">
-        <div class="profile-section">
-            <div class="profile-header">
-                <div class="profile-avatar">F</div>
-                <div class="profile-info">
-                    <h2 id="teacherName">Formateur</h2>
-                    <p id="teacherEmail">formateur@example.com</p>
+    
+    <div class="container">
+        <div id="dashboard" class="dashboard active">
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-avatar">F</div>
+                    <div class="profile-info">
+                        <h2 id="teacherName">Formateur</h2>
+                        <p id="teacherEmail">formateur@example.com</p>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <h3>Étudiants</h3>
+                        <p id="studentCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Réponses Quiz</h3>
+                        <p id="quizCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Descriptions</h3>
+                        <p id="descriptionCount">0</p>
+                    </div>
                 </div>
             </div>
-            <div class="profile-stats">
-                <div class="stat-card">
-                    <h3>Étudiants</h3>
-                    <p id="studentCount">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Réponses Quiz</h3>
-                    <p id="quizCount">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Descriptions</h3>
-                    <p id="descriptionCount">0</p>
-                </div>
-            </div>
+            
+            <div id="resultsContainer"></div>
         </div>
     </div>
 
-    <div id="resultsContainer"></div>
-
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+          // Check if user is logged in
           const formateur = localStorage.getItem("loggedInFormateur");
           if (!formateur) {
             alert("Accès refusé. Veuillez vous connecter.");
             window.location.href = "login.html";
             return;
           }
-      
+          
+          // Display the email in the profile section
+          const teacherEmail = document.getElementById("teacherEmail");
+          if (teacherEmail && formateur) {
+            teacherEmail.textContent = formateur;
+          }
+          
           const resultsContainer = document.getElementById("resultsContainer");
       
           const allQuizData = JSON.parse(localStorage.getItem("quizAnswers")) || {};
       
           if (Object.keys(allQuizData).length === 0) {
-            resultsContainer.innerHTML = "<p>Aucune réponse enregistrée pour le moment.</p>";
+            resultsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>Aucune réponse enregistrée pour le moment.</p>
+                </div>
+            `;
             return;
           }
       
@@ -210,7 +364,7 @@
             const responses = allQuizData[studentName];
       
             const studentDiv = document.createElement("div");
-            studentDiv.classList.add("student-result");
+            studentDiv.classList.add("student-card");
       
             const title = document.createElement("h3");
             title.textContent = `Stagiaire : ${studentName}`;
@@ -227,7 +381,24 @@
             resultsContainer.appendChild(studentDiv);
           }
         });
-      </script>
       
+        function showSection(sectionId) {
+            document.querySelectorAll('.dashboard').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+        
+        function logout() {
+            localStorage.removeItem("loggedInFormateur");
+            window.location.href = "login.html";
+        }
+    </script>
 </body>
 </html>
