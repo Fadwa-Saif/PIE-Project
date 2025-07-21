@@ -11,14 +11,12 @@
             --background-color: #f7fafc;
             --text-color: #2d3748;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         body {
             background-color: var(--background-color);
             min-height: 100vh;
@@ -26,7 +24,6 @@
             align-items: center;
             justify-content: center;
         }
-
         .login-container {
             background: white;
             padding: 2rem;
@@ -35,17 +32,14 @@
             width: 100%;
             max-width: 400px;
         }
-
         .form-group {
             margin-bottom: 1.5rem;
         }
-
         label {
             display: block;
             margin-bottom: 0.5rem;
             color: var(--text-color);
         }
-
         input {
             width: 100%;
             padding: 0.8rem;
@@ -53,13 +47,11 @@
             border-radius: 5px;
             font-size: 1rem;
         }
-
         .role-selector {
             display: flex;
             gap: 1rem;
             margin: 1rem 0;
         }
-
         .role-btn {
             flex: 1;
             padding: 1rem;
@@ -70,12 +62,10 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .role-btn.active {
             background: var(--primary-color);
             color: white;
         }
-
         .submit-btn {
             width: 100%;
             padding: 1rem;
@@ -87,11 +77,9 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-
         .submit-btn:hover {
             background: var(--secondary-color);
         }
-
         .error {
             color: #e53e3e;
             font-size: 0.9rem;
@@ -105,7 +93,6 @@
             width: 100%;
             max-width: 400px;
         }
-
         .error-message {
             color: #e53e3e;
             background: #fff5f5;
@@ -114,7 +101,7 @@
             margin-bottom: 1rem;
             display: none;
         }
-        </style>
+    </style>
 </head>
 <body>
     <div class="login-container">
@@ -125,26 +112,21 @@
         <div id="errorMessage" class="error-message">
             Identifiants incorrects
         </div>
-
         <form id="loginForm" onsubmit="handleLogin(event)">
             <div class="form-group">
                 <label for="username">Nom d'utilisateur</label>
                 <input type="text" id="username" required>
             </div>
-
             <div class="form-group">
                 <label for="password">Mot de passe</label>
                 <input type="password" id="password" required>
             </div>
-
             <button type="submit" class="submit-btn">Se connecter</button>
         </form>
     </div>
-
     <script>
         const predefinedFormateurs = [
-          { username: "formateur1", password: "1234" },
-          { username: "admin", password: "admin" }
+          { username: "Mohammed@gmail.com", password: "1234" },
         ];
       
         function handleLogin(event) {
