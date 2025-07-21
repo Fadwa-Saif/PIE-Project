@@ -368,7 +368,7 @@
 
 <div class="quiz-section">
     <h2>Questionnaire de Réflexion Personnelle</h2>
-    <form id="quizForm" onsubmit="submitQuiz(event)">
+    <form id="quiz-form" onsubmit="submitQuiz(event)">
         <!-- Section 1: Tags personnels -->
         <div class="question">
             <h3>1. Écrivez les 3 mots (tags) que vous voulez que les gens retiennent de vous :</h3>
@@ -462,7 +462,7 @@
             </div>
         </div>
 
-        <button type="submit" class="submit-btn">Soumettre les réponses</button>
+        <button type="submit" class="submit-btn" id="submit-btn">Soumettre les réponses</button>
         <div class="peer-review-section">
     <h2>Description des Collègues</h2>
     
@@ -470,7 +470,7 @@
     <div class="student-selector">
         <h3>Décrire un Collègue</h3>
         <button onclick="getRandomStudent()" class="random-btn">Choisir un Collègue au Hasard</button>
-        <div id="selectedStudent" class="selected-student-card" style="display: none;">
+        <div id="feedback-select" class="selected-student-card" style="display: none;">
             <h4>Collègue à décrire:</h4>
             <p id="studentName"></p>
             <div class="word-inputs">
@@ -495,130 +495,87 @@
 </div>
 
 <script>
-    // Add this to your existing JavaScript
-    function addCauseEntry() {
-        const causeTemplate = document.querySelector('.cause-entry').cloneNode(true);
-        // Clear the inputs
-        causeTemplate.querySelectorAll('input, textarea').forEach(input => input.value = '');
-        causeTemplate.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-        document.querySelector('.causes-grid').insertBefore(causeTemplate, document.querySelector('.add-cause-btn'));
+    const nom = localStorage.getItem("stagiaireNom");
+    const groupe = localStorage.getItem("stagiaireGroupe");
+    document.addEventListener("DOMContentLoaded", function () {
+    const nom = localStorage.getItem("stagiaireNom") || "Nom non trouvé";
+    const groupe = localStorage.getItem("stagiaireGroupe") || "Groupe non trouvé";
+
+    const userInfoDiv = document.getElementById("userInfo");
+    if (userInfoDiv) {
+        userInfoDiv.innerHTML = `
+            <p><strong>Nom :</strong> ${nom}</p>
+            <p><strong>Groupe :</strong> ${groupe}</p>
+        `;
     }
+});
 
-    // Modify your existing submitQuiz function to handle the new form data
-    async function submitQuiz(event) {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const data = {
-            tags: [...formData.getAll('tags[]')],
-            actions: [...formData.getAll('actions[]')],
-            trustExplanation: formData.get('trust_explanation'),
-            colleagueWords: [...formData.getAll('colleague_words[]')],
-            personalValues: [...formData.getAll('personal_values[]')],
-            causes: [...document.querySelectorAll('.cause-entry')].map(entry => ({
-                cause: entry.querySelector('input[name="causes[]"]').value,
-                actions: entry.querySelector('textarea[name="cause_actions[]"]').value,
-                reading: entry.querySelector('input[name="reading[]"]').checked,
-                news: entry.querySelector('input[name="news[]"]').checked,
-                engagement: entry.querySelector('input[name="engagement[]"]').checked
-            }))
-        };
-
-        try {
-            const response = await fetch('http://localhost:5000/api/quiz/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (response.ok) {
-                alert('Réponses soumises avec succès!');
-                // Optionally redirect or clear form
-            } else {
-                alert('Erreur lors de la soumission');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Erreur de connexion au serveur');
+    document.addEventListener("DOMContentLoaded", function () {
+      const quizForm = document.getElementById("quiz-form"); // adjust ID if needed
+      const printBtn = document.getElementById("print-btn");
+      const submitBtn = document.getElementById("submit-btn");
+      const feedbackSelect = document.getElementById("feedback-select");
+    
+      // Load saved answers from localStorage
+      function loadAnswers() {
+        const savedAnswers = JSON.parse(localStorage.getItem("quizAnswers")) || {};
+        for (const [name, value] of Object.entries(savedAnswers)) {
+          const input = document.querySelector(`[name="${name}"]`);
+          if (input) input.value = value;
         }
-    }
-    async function getRandomStudent() {
-        try {
-            const response = await fetch('http://localhost:5000/api/students/random', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            const data = await response.json();
-            if (data.student) {
-                document.getElementById('selectedStudent').style.display = 'block';
-                document.getElementById('studentName').textContent = data.student.name;
-                document.getElementById('selectedStudent').dataset.studentId = data.student.id;
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Erreur lors de la sélection d\'un étudiant');
+    
+        // Load feedback
+        const savedFeedback = localStorage.getItem("feedbackTo");
+        if (savedFeedback && feedbackSelect) {
+          feedbackSelect.value = savedFeedback;
         }
-    }
-
-    async function submitDescription() {
-        const words = [...document.querySelectorAll('.word-input')].map(input => input.value);
-        const studentId = document.getElementById('selectedStudent').dataset.studentId;
-        
-        if (words.some(word => !word)) {
-            alert('Veuillez remplir tous les mots');
-            return;
+      }
+    
+      // Save answers to localStorage
+      function saveAnswers() {
+        const inputs = quizForm.querySelectorAll("input[type='text'], textarea, select");
+        const answers = {};
+        inputs.forEach(input => {
+          if (input.name) {
+            answers[input.name] = input.value;
+          }
+        });
+        localStorage.setItem("quizAnswers", JSON.stringify(answers));
+      }
+    
+      // Save selected feedback student
+      function saveFeedback() {
+        if (feedbackSelect) {
+          localStorage.setItem("feedbackTo", feedbackSelect.value);
         }
-
-        try {
-            const response = await fetch('http://localhost:5000/api/descriptions/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    studentId,
-                    words,
-                    fromStudent: localStorage.getItem('userName')
-                })
-            });
-
-            if (response.ok) {
-                alert('Description soumise avec succès!');
-                document.querySelectorAll('.word-input').forEach(input => input.value = '');
-                document.getElementById('selectedStudent').style.display = 'none';
-                loadMyDescriptions();
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Erreur lors de la soumission de la description');
-        }
-    }
-
-    async function loadMyDescriptions() {
-        try {
-            const response = await fetch(`http://localhost:5000/api/descriptions/${localStorage.getItem('userName')}`);
-            const data = await response.json();
-            
-            const container = document.getElementById('myDescriptions');
-            container.innerHTML = data.descriptions.map(desc => `
-                <div class="description-card">
-                    <p>De: ${desc.fromStudent}</p>
-                    <div class="description-words">
-                        ${desc.words.map(word => `<span class="word-tag">${word}</span>`).join('')}
-                    </div>
-                </div>
-            `).join('') || '<p>Aucune description pour le moment</p>';
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    // Load descriptions when page loads
-    window.addEventListener('load', loadMyDescriptions);
-</script>
+      }
+    
+      // On form input, save answers live
+      quizForm.addEventListener("input", () => {
+        saveAnswers();
+        saveFeedback();
+      });
+    
+      // On submit button click
+      if (submitBtn) {
+        submitBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          saveAnswers();
+          saveFeedback();
+          alert("Réponses sauvegardées avec succès !");
+        });
+      }
+    
+      // Print functionality
+      if (printBtn) {
+        printBtn.addEventListener("click", () => {
+          window.print();
+        });
+      }
+    
+      loadAnswers();
+    });
+    </script>
+    
 </body>
 </html>
